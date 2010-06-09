@@ -201,7 +201,7 @@ meta::define_form 'meta', sub {
 
 __plktoDCjGQioE48vwfrH0xL3ulcYnTWp+fUvaFwRnnc
 
-meta::bootstrap('pod', <<'__3uM+GRhsAnxE6BFehM2nkGju4J93JQjqONxKbpE0Cdg');
+meta::bootstrap('pod', <<'__0h2CBA2cqa4qd6nox9dul6Jn9hcJFHw3uPdC89Xim7o');
 
 =head1 NAME
 
@@ -226,10 +226,9 @@ Currently the only known way to lose your data is to edit the serialization-rela
 something most people will normally do. In the future there may be a locking mechanism to prevent unintentional edits of these attributes.
 
 =cut
+__0h2CBA2cqa4qd6nox9dul6Jn9hcJFHw3uPdC89Xim7o
 
-__3uM+GRhsAnxE6BFehM2nkGju4J93JQjqONxKbpE0Cdg
-
-meta::code('divergence-lib', <<'__xW8XoDbsvwuFCE4oOlF2WH1ftunAeAcYzZcEtjl18EI');
+meta::code('divergence-lib', <<'__mbd9qxvbzX+u1M62mNR/UtpjSKhhTPG+A0c2cJavpLM');
 Divergence core library | Spencer Tipping <spencer@spencertipping.com>
 Licensed under the terms of the MIT source code license
 
@@ -282,20 +281,22 @@ var d = (function () {
   (d.functionals = [Array, Number, Boolean, Function, String, RegExp].map ('.prototype')).push (d.functional_extensions);
 
   d.functions ({
-      compose:  function (g) {var f = this.fn(); g = g.fn(); return function () {return f (g.apply (this, arguments))}},
- flat_compose:  function (g) {var f = this.fn(); g = g.fn(); return function () {return f.apply (this, g.apply (this, arguments))}},
+      compose:  function (g) {var f = this.fn(); g = g.fn(); return function () {return f.apply (this, [g.apply (this, arguments)])}},
+ flat_compose:  function (g) {var f = this.fn(); g = g.fn(); return function () {return f.apply (this,  g.apply (this, arguments) )}},
         curry:  function (n) {var f = this.fn(); return n > 1 ? function () {var as = d.arr(arguments); return function () {return f.curry (n - 1).apply (this, as.concat (d.arr (arguments)))}} : f},
         proxy:  function (g) {var f = this.fn(); return g ? function () {return f.apply.apply (f, g.fn().apply (this, arguments))} : function () {return f.apply (this, arguments)}},
          bind:  function (x) {var f = this.fn(); return d.init (function () {return f.apply (x, arguments)}, {binding: x, original: f})},
          type:  function  () {var f = function () {}, c = this.fn(); f = f.ctor.apply (f, arguments); return function () {return c.apply (new f(), arguments)}},
-         ctor:  function  () {var f = this.fn(), g = function () {f.apply (this, arguments)}; d.init.apply (this, [g.prototype].concat (d.arr (arguments))); return g},
+         ctor:  function  () {var g = function () {f.apply (this, arguments)}, f = g.original = this.fn(); d.init.apply (this, [g.prototype].concat (d.arr (arguments))); return g},
          tail: '[$_.fn(), arguments]'.fn(),
-          cps:  function (c) {var cc = [this.fn(), [c = (c || d.id).fn().proxy()]]; while (cc[0] !== c) cc = cc[0].fn().apply (this, cc[1]); return c.apply (this, cc[1])}});
+          cps:  function (c) {var cc = [this.fn(), [c = (c || d.id).fn().proxy()]]; while (cc[0] !== c) cc = cc[0].fn().apply (this, cc[1]); return c.apply (this, cc[1])},
+          fix:  function  () {var f = this.fn(); return f (function () {return f.fix().apply (this, arguments)})}});
 
   return d}) ();
-__xW8XoDbsvwuFCE4oOlF2WH1ftunAeAcYzZcEtjl18EI
 
-meta::code('divergence-rebase-lib', <<'__Rgs07lY9mPCpAhqZ2Lkl4yiZNCxwuvpfm8BykGEkDV4');
+__mbd9qxvbzX+u1M62mNR/UtpjSKhhTPG+A0c2cJavpLM
+
+meta::code('divergence.rebase-lib', <<'__SBlwPWgPo57k7gvzP7vlvvZFxCctCavkbzuL/EeyhOM');
 Divergence Rebase module | Spencer Tipping <spencer@spencertipping.com>
 Licensed under the terms of the MIT source code license
 
@@ -329,14 +330,15 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
                    unary: set(qw('u++ u-- ++ -- u+ u- u! u~ new typeof var case try finally throw return case else delete void import export ( [ { ?:')),
                syntactic: set(qw('case var if while for do switch return throw delete export import try catch finally void with else function new typeof in instanceof')),
                statement: set(qw('case var if while for do switch return throw delete export import try catch finally void with else')),
-               connected: set(qw('else catch finally')),
+               connected: set(qw('else catch finally')),                                                                       digit: set('0123456789.'.split('')),
                    ident: set('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789$_'.split ('')),                  punct: set('+-*/%&|^!~=<>?:;.,'.split ('')),
-                   right: set(qw('= += -= *= /= %= &= ^= |= <<= >>= >>>= u~ u! new typeof u+ u- u++ u-- ++ --')),            openers: {'(':')', '[':']', '{':'}', '?':':'},
+                   right: set(qw('= += -= *= /= %= &= ^= |= <<= >>= >>>= u~ u! new typeof u+ u- u++ u-- ++ -- ?')),          openers: {'(':')', '[':']', '{':'}', '?':':'},
      implicit_assignment: set(qw('++ -- u++ u--')),                                                                       sandwiches: set(qw('$ $$ $$$ _ __ ___ _$ _$$ __$')),
                  literal: set(qw('= ++ -- u++ u-- (! [! . ?: , ? u! ( { [ === !== == != ; : && ||')),                   sandwich_ops: set(qw('+ - * / % ^ | & << >> >>> < >')),
            prefix_binary: set(qw('if function catch for switch with while')),                                                closers: {')':'(', ']':'[', '}':'{', ':':'?:'},
             translations: {'u+':'+', 'u-':'-', 'u~':'~', 'u!':'!', 'u--':'--', 'u++':'++'},                                 arity_of: '$0.unary[$1] ? 1 : $1 == "?" ? 3 : 2'.fn(r),
            lvalue_assign: set(qw('+= -= *= /= %= ^= |= &= <<= >>= >>>=')),                                            should_convert: '! ($0.literal[$1] || $0.syntactic[$1])'.fn(r),
+               no_spaces: set(qw('.')),
 
                 alias_in: '$0.init ($1, $0.map ($2, {|h, k, v| k.maps_to (h[v] || v.fn()) |}.fn($1)))'.fn(d),
 
@@ -374,7 +376,7 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
 
                    parse: function (s) {var mark = 0, s = s.toString(), i = 0, $_ = '', l = s.length, token = '', expect_re = true, escaped = false, t = new r.syntax(null, '('),
                                                       c = s.charAt.bind (s), openers = [],
-                                             precedence = r.precedence, ident = r.ident, punct = r.punct,
+                                             precedence = r.precedence, ident = r.ident, punct = r.punct, digit = r.digit,
                                             line_breaks = [0].concat (s.split('\n').map('.length')), lb = 1,
                                           located_token = function () {var jump = lb << 1, l = 0, r = new String (token);
                                                                        while (jump >>= 1) mark >= line_breaks[l + jump] && (l += jump);
@@ -385,17 +387,17 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
                           while ((mark = i) < l && ($_ = c(i))) {
           escaped = token = '';
 
-               if                                (' \n\r\t'.indexOf ($_) > -1)                                                       {++i; continue}
-          else if                               ('([{?:}])'.indexOf ($_) > -1)                                                        expect_re = '([{:?'.indexOf ($_) > -1, ++i;
-          else if                 ($_ === '/' && c(i + 1) === '*' && (i += 2)) {while (c(++i) !== '/' || c(i - 1) !== '*' || ! ++i);  continue}
-          else if                             ($_ === '/' && c(i + 1) === '/') {while       (($_ = c(++i)) !== '\n' && $_ !== '\r');  continue}
-          else if ($_ === '/' && expect_re && ! (expect_re = ! (token = '/'))) {while            (($_ = c(++i)) !== '/' || escaped)   escaped = ! escaped && $_ === '\\';
-                                                                                while                               (ident[c(++i)]);}
-          else if              ($_ === '"' && ! (expect_re = ! (token = '"')))  while   (($_ = c(++i)) !== '"' || escaped || ! ++i)   escaped = ! escaped && $_ === '\\';
-          else if              ($_ === "'" && ! (expect_re = ! (token = "'")))  while   (($_ = c(++i)) !== "'" || escaped || ! ++i)   escaped = ! escaped && $_ === '\\';
-          else if                    (expect_re && punct[$_] && (token = 'u'))  while  (punct[$_ = c(i)] && precedence[token + $_])   token += $_, ++i;
-          else if                            (punct[$_] && (expect_re = true))  while  (punct[$_ = c(i)] && precedence[token + $_])   token += $_, ++i;
-          else                                                                 {while                               (ident[c(++i)]);  expect_re = precedence.hasOwnProperty (token = s.substring(mark, i))}
+               if                                (' \n\r\t'.indexOf ($_) > -1)                                                             {++i; continue}
+          else if                               ('([{?:}])'.indexOf ($_) > -1)                                                              expect_re = '([{:?'.indexOf ($_) > -1, ++i;
+          else if                 ($_ === '/' && c(i + 1) === '*' && (i += 2)) {while       (c(++i) !== '/' || c(i - 1) !== '*' || ! ++i);  continue}
+          else if                             ($_ === '/' && c(i + 1) === '/') {while             (($_ = c(++i)) !== '\n' && $_ !== '\r');  continue}
+          else if ($_ === '/' && expect_re && ! (expect_re = ! (token = '/'))) {while                  (($_ = c(++i)) !== '/' || escaped)   escaped = ! escaped && $_ === '\\';
+                                                                                while                                     (ident[c(++i)]);}
+          else if              ($_ === '"' && ! (expect_re = ! (token = '"')))  while         (($_ = c(++i)) !== '"' || escaped || ! ++i)   escaped = ! escaped && $_ === '\\';
+          else if              ($_ === "'" && ! (expect_re = ! (token = "'")))  while         (($_ = c(++i)) !== "'" || escaped || ! ++i)   escaped = ! escaped && $_ === '\\';
+          else if                    (expect_re && punct[$_] && (token = 'u'))  while        (punct[$_ = c(i)] && precedence[token + $_])   token += $_, ++i;
+          else if                            (punct[$_] && (expect_re = true))  while        (punct[$_ = c(i)] && precedence[token + $_])   token += $_, ++i;
+          else                                                                 {while (ident[$_ = c(++i)] || digit[c(mark)] && digit[$_]);  expect_re = precedence.hasOwnProperty (token = s.substring (mark, i))}
 
           expect_re && token.charAt(0) === 'u' || (token = s.substring (mark, i));
           token in {} && (token = '@' + token);
@@ -443,6 +445,7 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
                                              this.xs[1] && r.connected[this.xs[1].op] ? (($_ = s(this.xs[0])).charAt($_.length - 1) === '}' ? $_ + ' ' : $_ + ';') + s(this.xs[1]) :
                                                                      r.unary[this.op] ? (r.translations[this.op] || this.op) + ' ' + s(this.xs[0]) :
                                                              r.prefix_binary[this.op] ? this.op + ' ' + s(this.xs[0]) + ' ' + s(this.xs[1]) :
+                                                                 r.no_spaces[this.op] ? s(this.xs[0]) + this.op + s(this.xs[1]) :
                                                                                         s(this.xs[0]) + ' ' + this.op + ' ' + s(this.xs[1])}}),
 
   Macro support.
@@ -484,6 +487,15 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
 
           function (e) {return e.op == '>$>' ? new r.syntax(e.parent, 'function').with_node (e.xs[0].op == '(' ? e.xs[0] : new r.syntax (null, '(', [e.xs[0]])).
                                                                                   with_node (new r.syntax (null, '{').with_node (new r.syntax (null, 'return').with_node (e.xs[1]))) : e},
+
+    Function preloading.
+    Since Rebase doesn't provide an expression-mode variable binding syntax (this would be difficult), binding variables becomes a matter of using functions. This has the advantage that you
+    end up with a proper lexical scope too.
+
+      | x |$> f === f(x)
+      | (x, y) |$> f === f (x, y)
+
+          function (e) {return e.op == '|$>' ? new r.syntax(e.parent, '(!').with_node (e.xs[1]).with_node (e.xs[0].op == '(' ? e.xs[0] : new r.syntax(null, '(').with_node (e.xs[0])) : e},
 
     Comments.
     Structural comments can be useful for removing chunks of code or for getting comments through SpiderMonkey's parse-deparse cycle (SpiderMonkey, and perhaps other JS interpreters, removes
@@ -531,32 +543,53 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
   enable it like this:
 
   r.enable_inline_macro = (function (enabled) {return function () {enabled || (enabled = !! d.inline_macros.push ('$0.toString()'.compose (r.transform).compose (r.parse)))}}) (false)}) ();
-__Rgs07lY9mPCpAhqZ2Lkl4yiZNCxwuvpfm8BykGEkDV4
 
-meta::code('main', <<'__BxFuW+OhIl72HcEwQx6ZvB2WqYNUT4zAyPup3ucD8lg');
-Divergence catamorphism module | Spencer Tipping <spencer@spencertipping.com>
+__SBlwPWgPo57k7gvzP7vlvvZFxCctCavkbzuL/EeyhOM
+
+meta::code('main', <<'__sYHR4IemF6nuPemfJ5OmXCQDf6iTeAZqzwwTKIw/0RA');
+Divergence catamorphism library | Spencer Tipping <spencer@spencertipping.com>
 Licensed under the terms of the MIT source code license
 
-d.rebase (function () {
-  d.functions ({});
+Catamorphisms.
+A catamorphism, roughly speaking, is a function that takes an A and a B and returns an A. That is, it somehow folds the B into the A to "collapse" its two parameters into one final value. The
+important thing about it is the recursion; when you think of it as a repeated process, then you have a function which consumes elements:
 
-  d.catamorphism = {};
+  | [a, [b, c]] --> f (a, [b, c]) --> f (a, f (b, c))
+
+Similarly, an anamorphism produces elements (represented as arrays in JavaScript as an approximation to multiple-value return):
+
+  | f (x) --> [a, x']
+  | [a, f(x')] = [a, [b, x'']]
+  | ...
+
+If you flat_compose a catamorphism and an anamorphism, like this:
+
+  | some_catamorphism.flat_compose (some_anamorphism)
+
+You end up with what is referred to as a /hylomorphism/. The gratuitous complexity embodied in this jargon defies reason and betrays the inner elitism of the dark side of academia. :)
+
+d.rebase (function () {
+  d.functions ({array_anamorphism: predicate >$> ((this.fn(), predicate.fn()) |$> ((f, p) >$> (g >$> (x >$> (p(x) ? [] : (f(x) |$> (y >$> [y[0]] + g(y[1])))))))),
+               array_catamorphism:      last >$> (this |$> (f >$> (xs >$> xs.fold (f, last))))});
 }) ();
-__BxFuW+OhIl72HcEwQx6ZvB2WqYNUT4zAyPup3ucD8lg
+__sYHR4IemF6nuPemfJ5OmXCQDf6iTeAZqzwwTKIw/0RA
 
 meta::code('scratch', <<'__UFvA92B98GVzh3boXGxl19QiD9162rJI14MuI2vyVq0');
 This is for scratchwork that isn't part of your system. It could be used for testing or other experimentation.
 :: get main
 __UFvA92B98GVzh3boXGxl19QiD9162rJI14MuI2vyVq0
 
-meta::code('test', <<'__AdWSJBYXxYan9h9r3MJ+wu3/+7y5snuM9TylVF9r2k0');
-Divergence catamorphism unit tests | Spencer Tipping <spencer@spencertipping.com>
-Licensed under the terms of the MIT source code license
-
+meta::code('test', <<'__73YeUOFz38azpf95A2KNoTmI5yegWz4pLDGNhXovjr4');
 :: get divergence-lib
-:: get divergence-rebase-lib
+:: get divergence.rebase-lib
 :: get main
-__AdWSJBYXxYan9h9r3MJ+wu3/+7y5snuM9TylVF9r2k0
+
+
+__73YeUOFz38azpf95A2KNoTmI5yegWz4pLDGNhXovjr4
+
+meta::code('util', <<'__MPk0PTno+Xk+05NuiWkhKJDdoggh4uPjBtujjGea6+U');
+This is for more generic utilities that are likely to be factored out into a separate library later. Most bottom-up projects will end up having such code.
+__MPk0PTno+Xk+05NuiWkhKJDdoggh4uPjBtujjGea6+U
 
 meta::data('default-action', <<'__zmNcTqv/Xk9W26j7HjnKI1UwqitrGFM+7xrzhiAWxXc');
 shell
@@ -571,9 +604,9 @@ meta::data('meta-associations', <<'__PRn3E4sEYBafwIXKC61VRabCemMeSeRn2H7z3wLgOo4
 ^vim_highlighter:: .vim
 __PRn3E4sEYBafwIXKC61VRabCemMeSeRn2H7z3wLgOo4
 
-meta::data('name', <<'__oOLOMJuouaYuHelgM2WFNY/hkQ9Okcgzj8TjRFXykfs');
-catamorphism
-__oOLOMJuouaYuHelgM2WFNY/hkQ9Okcgzj8TjRFXykfs
+meta::data('name', <<'__k08XWvcKQSBoJ5DW7s0kr7Rh03fDC/PX4qzAT0bYYNU');
+divergence.catamorphism
+__k08XWvcKQSBoJ5DW7s0kr7Rh03fDC/PX4qzAT0bYYNU
 
 meta::function('add-to', <<'__KBgra0vG1gIsUI8CCVf4ZEdCatZDCdVO6HuUx+jOJ9Q');
 my ($filename) = @_;
@@ -1121,6 +1154,11 @@ sub message {
   print STDERR "${padding}[\033[${color}m$prefix\033[0;0m] $message\n";
 }
 __pvD00lNNeQAXRGZFRNjR0bf9b/Z/rZgMgNL5zN4ZsQA
+
+meta::list('dependencies', <<'__eBMwpCrQXJm/Kfs7B8tWufd5J7rMd0Pbiy+eifQSI08');
+./divergence        main
+./divergence.rebase main
+__eBMwpCrQXJm/Kfs7B8tWufd5J7rMd0Pbiy+eifQSI08
 
 meta::sh('js', <<'__qGEHHjKcAKXQz3fhJNhOtnWH3pjzV5E13Ndz4KxZrvs');
 js __code__
