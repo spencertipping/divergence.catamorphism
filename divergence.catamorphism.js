@@ -20,6 +20,6 @@
 // You end up with what is referred to as a /hylomorphism/. The gratuitous complexity embodied in this jargon defies reason and betrays the inner elitism of the dark side of academia. :)
 
 d.rebase (function () {
-  d.functions ({array_anamorphism: predicate >$> ((this.fn(), predicate.fn()) |$> ((f, p) >$> (g >$> (x >$> (p(x) ? [] : (f(x) |$> (y >$> [y[0]] + g(y[1])))))))),
-               array_catamorphism:      last >$> (this |$> (f >$> (xs >$> xs.fold (f, last))))});
+  d.functions ({array_left_anamorphism: predicate >$> ((this.fn(), predicate.fn()) |$> ((f, p) >$> (g >$> (x >$> (p(x) ? f(x) |$> (y >$> [y[0]] + g(y[1])) : []))).fix())),
+               array_left_catamorphism:      last >$> (xs >$> xs.fold (this, last)).bind (this)});
 }) ();

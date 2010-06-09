@@ -546,7 +546,7 @@ as a key there (e.g. 'foo'), then it will be sandwiched between binary operators
 
 __SBlwPWgPo57k7gvzP7vlvvZFxCctCavkbzuL/EeyhOM
 
-meta::code('main', <<'__sYHR4IemF6nuPemfJ5OmXCQDf6iTeAZqzwwTKIw/0RA');
+meta::code('main', <<'__BG/9bYoXunN/CE+cNbsS/Yl5TKuEHR3u27mcDqgwcJw');
 Divergence catamorphism library | Spencer Tipping <spencer@spencertipping.com>
 Licensed under the terms of the MIT source code license
 
@@ -569,23 +569,23 @@ If you flat_compose a catamorphism and an anamorphism, like this:
 You end up with what is referred to as a /hylomorphism/. The gratuitous complexity embodied in this jargon defies reason and betrays the inner elitism of the dark side of academia. :)
 
 d.rebase (function () {
-  d.functions ({array_anamorphism: predicate >$> ((this.fn(), predicate.fn()) |$> ((f, p) >$> (g >$> (x >$> (p(x) ? [] : (f(x) |$> (y >$> [y[0]] + g(y[1])))))))),
-               array_catamorphism:      last >$> (this |$> (f >$> (xs >$> xs.fold (f, last))))});
+  d.functions ({array_left_anamorphism: predicate >$> ((this.fn(), predicate.fn()) |$> ((f, p) >$> (g >$> (x >$> (p(x) ? f(x) |$> (y >$> [y[0]] + g(y[1])) : []))).fix())),
+               array_left_catamorphism:      last >$> (xs >$> xs.fold (this, last)).bind (this)});
 }) ();
-__sYHR4IemF6nuPemfJ5OmXCQDf6iTeAZqzwwTKIw/0RA
+__BG/9bYoXunN/CE+cNbsS/Yl5TKuEHR3u27mcDqgwcJw
 
 meta::code('scratch', <<'__UFvA92B98GVzh3boXGxl19QiD9162rJI14MuI2vyVq0');
 This is for scratchwork that isn't part of your system. It could be used for testing or other experimentation.
 :: get main
 __UFvA92B98GVzh3boXGxl19QiD9162rJI14MuI2vyVq0
 
-meta::code('test', <<'__73YeUOFz38azpf95A2KNoTmI5yegWz4pLDGNhXovjr4');
+meta::code('test', <<'__SnhXsKbkygLbs3PR1akA2yHnckAqzKuJXeSkwjwzryc');
 :: get divergence-lib
 :: get divergence.rebase-lib
 :: get main
 
-
-__73YeUOFz38azpf95A2KNoTmI5yegWz4pLDGNhXovjr4
+  print ('[$0, $0 - 1]'.array_left_anamorphism ('$0 > 0') (10).toSource ());
+__SnhXsKbkygLbs3PR1akA2yHnckAqzKuJXeSkwjwzryc
 
 meta::code('util', <<'__MPk0PTno+Xk+05NuiWkhKJDdoggh4uPjBtujjGea6+U');
 This is for more generic utilities that are likely to be factored out into a separate library later. Most bottom-up projects will end up having such code.
